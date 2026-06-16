@@ -5,8 +5,14 @@ export async function fetchOfficialExtracts() {
   const response = await fetch(OFFICIAL_EXTRACTS_URL, {
     cache: "no-store",
     headers: {
-      Accept: "text/html,application/xhtml+xml",
-      "User-Agent": "QuinielaMisioneraDashboard/1.0",
+      Accept:
+        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "es-AR,es;q=0.9,en;q=0.7",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+      Referer: "https://www.loteriademisiones.com.ar/",
+      "User-Agent":
+        "Mozilla/5.0 (compatible; QuinielaMisioneraDashboard/1.0; +https://www.loteriademisiones.com.ar/)",
     },
   });
 

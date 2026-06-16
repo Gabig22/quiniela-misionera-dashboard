@@ -44,7 +44,9 @@ export default function StatusBar({
             ? `Sin conexion con fuente oficial${
                 fetchedAtLabel ? ` - ultimo dato ${fetchedAtLabel}` : ""
               }`
-            : `Actualizado recien${fetchedAtLabel ? ` - ${fetchedAtLabel}` : ""}`}
+            : `Conectado a fuente oficial${
+                fetchedAtLabel ? ` - Actualizado ${fetchedAtLabel}` : ""
+              }`}
         </span>
       </div>
     </footer>

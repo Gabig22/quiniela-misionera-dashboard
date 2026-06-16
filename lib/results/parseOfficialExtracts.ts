@@ -45,10 +45,15 @@ function htmlToLines(html: string) {
     .filter(Boolean);
 }
 
-function readNextValue(lines: string[], index: number) {
-  const inlineValue = lines[index].split(":").slice(1).join(":").trim();
+function readLabelValue(lines: string[], index: number, label: "FECHA" | "HORA") {
+  const normalizedLine = stripAccents(lines[index]);
+  const otherLabel = label === "FECHA" ? "HORA" : "FECHA";
+  const inlineValue = normalizedLine
+    .replace(new RegExp(`^\\s*${label}\\s*:?\\s*`, "i"), "")
+    .split(new RegExp(`\\b${otherLabel}\\b`, "i"))[0]
+    .trim();
 
-  if (inlineValue) {
+  if (inlineValue && inlineValue !== ":") {
     return inlineValue;
   }
 
@@ -132,13 +137,22 @@ export function parseOfficialExtracts(html: string): ParsedOfficialExtracts {
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
 
-    if (/^FECHA\b/i.test(line)) {
-      currentDate = normalizeOfficialDate(readNextValue(lines, index));
-      continue;
+    if (/\bFECHA\b/i.test(stripAccents(line))) {
+      currentDate = normalizeOfficialDate(readLabelValue(lines, index, "FECHA"));
+
+      const inlineTime = stripAccents(line).match(/\bHORA\s*:?\s*([0-9]{1,2}\s*:\s*[0-9]{2})/i)?.[1];
+
+      if (inlineTime) {
+        currentTime = normalizeOfficialTime(inlineTime);
+      }
+
+      if (!/\bHORA\b/i.test(stripAccents(line))) {
+        continue;
+      }
     }
 
-    if (/^HORA\b/i.test(line)) {
-      currentTime = normalizeOfficialTime(readNextValue(lines, index));
+    if (/\bHORA\b/i.test(stripAccents(line))) {
+      currentTime = normalizeOfficialTime(readLabelValue(lines, index, "HORA"));
       continue;
     }
 
