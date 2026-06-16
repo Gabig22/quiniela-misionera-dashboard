@@ -50,6 +50,9 @@ export type ResultsApiSuccess = {
   latestPublishedDraw: OfficialDraw | null;
   debug: {
     publishedCount: number;
+    fetchMode?: string;
+    directStatus?: number | null;
+    parsedDrawsCount?: number;
     draws: Array<{
       key: DrawKey;
       resultDate: string | null;
@@ -72,6 +75,9 @@ export type ResultsApiError = {
   latestPublishedDraw: null;
   debug: {
     publishedCount: number;
+    fetchMode?: string;
+    directStatus?: number | null;
+    parsedDrawsCount?: number;
     draws: Array<{
       key: DrawKey;
       resultDate: string | null;

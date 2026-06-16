@@ -11,7 +11,7 @@ import type {
 } from "@/lib/results/types";
 
 function normalizeLine(line: string) {
-  return line.replace(/\s+/g, " ").trim();
+  return line.replace(/^#+\s*/, "").replace(/\s+/g, " ").trim();
 }
 
 function stripAccents(value: string) {

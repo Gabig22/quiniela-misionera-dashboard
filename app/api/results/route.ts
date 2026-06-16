@@ -62,10 +62,16 @@ export async function GET() {
   const today = getArgentinaToday();
 
   try {
-    const html = await fetchOfficialExtracts();
-    const parsedExtracts = parseOfficialExtracts(html);
+    const officialExtracts = await fetchOfficialExtracts();
+    const parsedExtracts = parseOfficialExtracts(officialExtracts.html);
     const draws = normalizeDraws(parsedExtracts.draws, today);
     const latestPublishedDraw = findLatestPublishedDraw(draws);
+    const debug = {
+      ...buildDebug(draws),
+      fetchMode: officialExtracts.fetchMode,
+      directStatus: officialExtracts.directStatus,
+      parsedDrawsCount: parsedExtracts.draws.length,
+    };
 
     return NextResponse.json(
       {
@@ -76,7 +82,7 @@ export async function GET() {
         today,
         draws,
         latestPublishedDraw,
-        debug: buildDebug(draws),
+        debug,
       },
       {
         headers: {
