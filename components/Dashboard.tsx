@@ -121,7 +121,7 @@ function formatFetchTime(value: string | null) {
 }
 
 export default function Dashboard() {
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState<Date | null>(null);
   const [draws, setDraws] = useState<OfficialDraw[]>(() => buildPendingDraws());
   const [latestPublishedDraw, setLatestPublishedDraw] =
     useState<OfficialDraw | null>(null);
@@ -130,6 +130,7 @@ export default function Dashboard() {
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
   useEffect(() => {
+    setNow(new Date());
     const timer = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(timer);
   }, []);
@@ -183,6 +184,10 @@ export default function Dashboard() {
     latestPublishedDraw ?? publishedResults[publishedResults.length - 1] ?? draws[0];
 
   const nextDraw = useMemo(() => {
+    if (!now) {
+      return draws[0];
+    }
+
     return draws
       .map((draw) => ({
         draw,
@@ -193,17 +198,17 @@ export default function Dashboard() {
   }, [draws, now]);
 
   const nextDrawDate = useMemo(
-    () => getArgentinaScheduledDate(nextDraw.scheduledTime, now),
+    () => (now ? getArgentinaScheduledDate(nextDraw.scheduledTime, now) : null),
     [nextDraw.scheduledTime, now],
   );
 
   return (
     <main className="flex min-h-screen w-full flex-col gap-5 overflow-hidden px-6 py-5">
       <Header
-        dateLabel={dateFormatter.format(now)}
-        timeLabel={timeFormatter.format(now)}
+        dateLabel={now ? dateFormatter.format(now) : "Cargando fecha"}
+        timeLabel={now ? timeFormatter.format(now) : "--:--:--"}
         nextDrawName={nextDraw.title}
-        countdown={formatCountdown(nextDrawDate, now)}
+        countdown={now && nextDrawDate ? formatCountdown(nextDrawDate, now) : "--:--:--"}
       />
 
       <section className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_360px] gap-5">

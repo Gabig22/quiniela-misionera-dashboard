@@ -69,6 +69,7 @@ export function buildPendingDraws(): OfficialDraw[] {
     resultTime: null,
     drawNumber: null,
     status: "pending",
+    prizeCount: 0,
     prizes: [],
     accent: definition.accent,
   }));

@@ -3,12 +3,10 @@ export const OFFICIAL_EXTRACTS_URL =
 
 export async function fetchOfficialExtracts() {
   const response = await fetch(OFFICIAL_EXTRACTS_URL, {
+    cache: "no-store",
     headers: {
       Accept: "text/html,application/xhtml+xml",
       "User-Agent": "QuinielaMisioneraDashboard/1.0",
-    },
-    next: {
-      revalidate: 60,
     },
   });
 

@@ -1,4 +1,9 @@
 import * as cheerio from "cheerio";
+import { DRAW_DEFINITIONS } from "@/lib/results/drawDefinitions";
+import {
+  normalizeOfficialDate,
+  normalizeOfficialTime,
+} from "@/lib/results/time";
 import type {
   ParsedOfficialDraw,
   ParsedOfficialExtracts,
@@ -12,6 +17,17 @@ function normalizeLine(line: string) {
 function stripAccents(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
+
+function normalizeTitle(title: string) {
+  return stripAccents(title)
+    .replace(/\s+/g, " ")
+    .trim()
+    .toUpperCase();
+}
+
+const ALLOWED_DRAW_TITLES = new Set(
+  DRAW_DEFINITIONS.map((definition) => normalizeTitle(definition.officialTitle)),
+);
 
 function htmlToLines(html: string) {
   const htmlWithBreaks = html
@@ -41,7 +57,8 @@ function readNextValue(lines: string[], index: number) {
 
 function isSectionBoundary(line: string) {
   return (
-    /^FECHA:?$/i.test(line) ||
+    /^FECHA\b/i.test(line) ||
+    /^HORA\b/i.test(line) ||
     /^QUINIELA\s+/i.test(line) ||
     /^POCEADA\s+/i.test(line) ||
     /^MINI\s+POCEADA\s+/i.test(line) ||
@@ -115,17 +132,22 @@ export function parseOfficialExtracts(html: string): ParsedOfficialExtracts {
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
 
-    if (/^FECHA:?/i.test(line)) {
-      currentDate = readNextValue(lines, index);
+    if (/^FECHA\b/i.test(line)) {
+      currentDate = normalizeOfficialDate(readNextValue(lines, index));
       continue;
     }
 
-    if (/^HORA:?/i.test(line)) {
-      currentTime = readNextValue(lines, index);
+    if (/^HORA\b/i.test(line)) {
+      currentTime = normalizeOfficialTime(readNextValue(lines, index));
       continue;
     }
 
-    if (/^QUINIELA\s+/i.test(line) && currentDate && currentTime) {
+    if (
+      /^QUINIELA\s+/i.test(line) &&
+      currentDate &&
+      currentTime &&
+      ALLOWED_DRAW_TITLES.has(normalizeTitle(line))
+    ) {
       draws.push(parseDrawAt(lines, index, currentDate, currentTime));
     }
   }

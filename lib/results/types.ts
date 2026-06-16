@@ -22,6 +22,7 @@ export type OfficialDraw = {
   resultTime: string | null;
   drawNumber: string | null;
   status: DrawStatus;
+  prizeCount: number;
   prizes: Prize[];
   accent: string;
 };
@@ -47,6 +48,14 @@ export type ResultsApiSuccess = {
   today: string;
   draws: OfficialDraw[];
   latestPublishedDraw: OfficialDraw | null;
+  debug: {
+    draws: Array<{
+      key: DrawKey;
+      resultDate: string | null;
+      prizeCount: number;
+      status: DrawStatus;
+    }>;
+  };
 };
 
 export type ResultsApiError = {
@@ -56,6 +65,14 @@ export type ResultsApiError = {
   today: string;
   draws: OfficialDraw[];
   latestPublishedDraw: null;
+  debug: {
+    draws: Array<{
+      key: DrawKey;
+      resultDate: string | null;
+      prizeCount: number;
+      status: DrawStatus;
+    }>;
+  };
   error: {
     code: "OFFICIAL_SOURCE_UNAVAILABLE" | "OFFICIAL_SOURCE_PARSE_ERROR";
     message: string;
