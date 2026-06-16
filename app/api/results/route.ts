@@ -10,6 +10,7 @@ import { DRAW_DEFINITIONS, buildPendingDraws } from "@/lib/results/drawDefinitio
 import type { OfficialDraw } from "@/lib/results/types";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 export const revalidate = 0;
 
 function parseScheduledMinutes(time: string) {
@@ -42,10 +43,15 @@ function findLatestPublishedDraw(draws: OfficialDraw[]) {
 
 function buildDebug(draws: OfficialDraw[]) {
   return {
+    publishedCount: draws.filter((draw) => draw.status === "published").length,
     draws: draws.map((draw) => ({
       key: draw.key,
       resultDate: draw.resultDate,
+      resultTime: draw.resultTime,
+      drawNumber: draw.drawNumber,
       prizeCount: draw.prizeCount,
+      prizesLength: draw.prizes.length,
+      firstPrize: draw.prizes[0]?.number ?? null,
       status: draw.status,
     })),
   };
@@ -74,7 +80,7 @@ export async function GET() {
       },
       {
         headers: {
-          "Cache-Control": "s-maxage=60, stale-while-revalidate=30",
+          "Cache-Control": "no-store, max-age=0",
         },
       },
     );

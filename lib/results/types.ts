@@ -49,10 +49,15 @@ export type ResultsApiSuccess = {
   draws: OfficialDraw[];
   latestPublishedDraw: OfficialDraw | null;
   debug: {
+    publishedCount: number;
     draws: Array<{
       key: DrawKey;
       resultDate: string | null;
+      resultTime: string | null;
+      drawNumber: string | null;
       prizeCount: number;
+      prizesLength: number;
+      firstPrize: string | null;
       status: DrawStatus;
     }>;
   };
@@ -66,10 +71,15 @@ export type ResultsApiError = {
   draws: OfficialDraw[];
   latestPublishedDraw: null;
   debug: {
+    publishedCount: number;
     draws: Array<{
       key: DrawKey;
       resultDate: string | null;
+      resultTime: string | null;
+      drawNumber: string | null;
       prizeCount: number;
+      prizesLength: number;
+      firstPrize: string | null;
       status: DrawStatus;
     }>;
   };

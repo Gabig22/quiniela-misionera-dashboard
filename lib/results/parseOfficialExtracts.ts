@@ -45,19 +45,22 @@ function htmlToLines(html: string) {
     .filter(Boolean);
 }
 
-function readLabelValue(lines: string[], index: number, label: "FECHA" | "HORA") {
+function readDateValue(lines: string[], index: number) {
   const normalizedLine = stripAccents(lines[index]);
-  const otherLabel = label === "FECHA" ? "HORA" : "FECHA";
-  const inlineValue = normalizedLine
-    .replace(new RegExp(`^\\s*${label}\\s*:?\\s*`, "i"), "")
-    .split(new RegExp(`\\b${otherLabel}\\b`, "i"))[0]
-    .trim();
+  const inlineDate = normalizedLine.match(
+    /\bFECHA\b\s*:?\s*(\d{1,2}\s*[\/.-]\s*\d{1,2}\s*[\/.-]\s*\d{2,4})/i,
+  )?.[1];
 
-  if (inlineValue && inlineValue !== ":") {
-    return inlineValue;
-  }
+  return inlineDate ?? lines[index + 1] ?? "";
+}
 
-  return lines[index + 1] ?? "";
+function readTimeValue(lines: string[], index: number) {
+  const normalizedLine = stripAccents(lines[index]);
+  const inlineTime = normalizedLine.match(
+    /\bHORA\b\s*:?\s*(\d{1,2}\s*:\s*\d{2})/i,
+  )?.[1];
+
+  return inlineTime ?? lines[index + 1] ?? "";
 }
 
 function isSectionBoundary(line: string) {
@@ -138,13 +141,7 @@ export function parseOfficialExtracts(html: string): ParsedOfficialExtracts {
     const line = lines[index];
 
     if (/\bFECHA\b/i.test(stripAccents(line))) {
-      currentDate = normalizeOfficialDate(readLabelValue(lines, index, "FECHA"));
-
-      const inlineTime = stripAccents(line).match(/\bHORA\s*:?\s*([0-9]{1,2}\s*:\s*[0-9]{2})/i)?.[1];
-
-      if (inlineTime) {
-        currentTime = normalizeOfficialTime(inlineTime);
-      }
+      currentDate = normalizeOfficialDate(readDateValue(lines, index));
 
       if (!/\bHORA\b/i.test(stripAccents(line))) {
         continue;
@@ -152,7 +149,7 @@ export function parseOfficialExtracts(html: string): ParsedOfficialExtracts {
     }
 
     if (/\bHORA\b/i.test(stripAccents(line))) {
-      currentTime = normalizeOfficialTime(readLabelValue(lines, index, "HORA"));
+      currentTime = normalizeOfficialTime(readTimeValue(lines, index));
       continue;
     }
 
