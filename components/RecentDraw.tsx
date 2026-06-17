@@ -1,4 +1,5 @@
 import type { OfficialDraw } from "@/lib/results/types";
+import { getDrawDateBadge } from "@/lib/results/drawDateBadge";
 
 type RecentDrawProps = {
   draw: OfficialDraw;
@@ -6,6 +7,7 @@ type RecentDrawProps = {
 
 export default function RecentDraw({ draw }: RecentDrawProps) {
   const isPublished = draw.status === "published";
+  const dateBadge = getDrawDateBadge(draw);
   const headNumber =
     draw.prizes.find((prize) => prize.position === 1)?.number ?? "----";
   const topPrizes = draw.prizes
@@ -28,8 +30,7 @@ export default function RecentDraw({ draw }: RecentDrawProps) {
         <div>
           <h2 className="text-3xl font-black text-white">{draw.title}</h2>
           <p className="mt-1 font-mono text-base font-bold text-slate-300">
-            {draw.resultTime ?? draw.scheduledTime} hs &middot;{" "}
-            {isPublished ? "Publicado" : "Pendiente"}
+            {draw.resultTime ?? draw.scheduledTime} hs &middot; {dateBadge}
           </p>
         </div>
         <div
