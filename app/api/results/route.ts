@@ -59,7 +59,7 @@ function buildDebug(draws: OfficialDraw[]) {
 
 export async function GET() {
   const fetchedAt = new Date().toISOString();
-  const today = getArgentinaToday();
+  const today = process.env.IPLYC_DEBUG_TODAY ?? getArgentinaToday();
 
   try {
     const officialExtracts = await fetchOfficialExtracts();

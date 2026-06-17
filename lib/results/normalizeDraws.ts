@@ -100,6 +100,9 @@ export function normalizeDraws(
         resultDate === normalizedToday &&
         isCompletePrizeList(parsedDraw),
     );
+    const hasDisplayablePrizes = Boolean(
+      parsedDraw && isCompletePrizeList(parsedDraw),
+    );
 
     return {
       key: definition.key,
@@ -110,7 +113,7 @@ export function normalizeDraws(
       drawNumber: parsedDraw?.drawNumber ?? null,
       status: isPublished ? "published" : "pending",
       prizeCount,
-      prizes: isPublished ? parsedDraw!.prizes : [],
+      prizes: hasDisplayablePrizes ? parsedDraw!.prizes : [],
       accent: definition.accent,
     };
   });

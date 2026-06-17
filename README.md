@@ -13,6 +13,7 @@ https://www.loteriademisiones.com.ar/extractos/
 - Si falla la conexion con la fuente oficial, la pantalla mantiene el ultimo dato valido.
 - Los sorteos se validan contra la fecha actual de Argentina (`America/Argentina/Buenos_Aires`).
 - Un sorteo figura como publicado solo si tiene fecha de hoy y 20 premios completos.
+- Antes de que salga el primer sorteo del dia, se muestran los ultimos resultados disponibles para que la pantalla no quede vacia, pero el estado queda como pendiente hasta que IPLyC publique el resultado de hoy.
 
 ## Correr localmente
 

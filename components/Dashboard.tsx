@@ -120,6 +120,45 @@ function formatFetchTime(value: string | null) {
   }).format(new Date(value));
 }
 
+function parseResultDateValue(date: string | null) {
+  const match = date?.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+
+  if (!match) {
+    return 0;
+  }
+
+  const [, day, month, year] = match;
+
+  return Date.UTC(Number(year), Number(month) - 1, Number(day));
+}
+
+function parseScheduledMinutes(time: string) {
+  const [hours, minutes] = time.split(":").map(Number);
+
+  return hours * 60 + minutes;
+}
+
+function findLatestAvailableDraw(draws: OfficialDraw[]) {
+  return (
+    draws
+      .filter((draw) => draw.prizes.length === 20)
+      .sort((left, right) => {
+        const dateDiff =
+          parseResultDateValue(right.resultDate) -
+          parseResultDateValue(left.resultDate);
+
+        if (dateDiff !== 0) {
+          return dateDiff;
+        }
+
+        return (
+          parseScheduledMinutes(right.resultTime ?? right.scheduledTime) -
+          parseScheduledMinutes(left.resultTime ?? left.scheduledTime)
+        );
+      })[0] ?? draws[0]
+  );
+}
+
 export default function Dashboard() {
   const [now, setNow] = useState<Date | null>(null);
   const [draws, setDraws] = useState<OfficialDraw[]>(() => buildPendingDraws());
@@ -181,7 +220,9 @@ export default function Dashboard() {
 
   const publishedResults = draws.filter((draw) => draw.status === "published");
   const recentDraw =
-    latestPublishedDraw ?? publishedResults[publishedResults.length - 1] ?? draws[0];
+    latestPublishedDraw ??
+    publishedResults[publishedResults.length - 1] ??
+    findLatestAvailableDraw(draws);
 
   const nextDraw = useMemo(() => {
     if (!now) {
