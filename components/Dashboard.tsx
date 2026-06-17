@@ -179,7 +179,7 @@ export default function Dashboard() {
 
     async function loadResults() {
       try {
-        const response = await fetch("/api/results", {
+        const response = await fetch(`/api/results?t=${Date.now()}`, {
           cache: "no-store",
         });
         const payload = (await response.json()) as ResultsApiResponse;

@@ -1,8 +1,6 @@
 export const OFFICIAL_EXTRACTS_URL =
   "https://www.loteriademisiones.com.ar/extractos/";
 
-const TEXT_FALLBACK_URL = `https://r.jina.ai/http://r.jina.ai/http://${OFFICIAL_EXTRACTS_URL}`;
-
 export type OfficialExtractsFetchMode = "direct" | "text-fallback";
 
 type OfficialExtractsFetchResult = {
@@ -21,8 +19,18 @@ async function fetchText(url: string) {
       "Cache-Control": "no-cache",
       Pragma: "no-cache",
       "User-Agent": "Mozilla/5.0",
+      "X-No-Cache": "true",
     },
   });
+}
+
+function buildTextFallbackUrl() {
+  const targetUrl = new URL(OFFICIAL_EXTRACTS_URL);
+  const cacheKey = Math.floor(Date.now() / 60000).toString();
+
+  targetUrl.searchParams.set("_", cacheKey);
+
+  return `https://r.jina.ai/http://${targetUrl.toString()}`;
 }
 
 export async function fetchOfficialExtracts() {
@@ -45,7 +53,7 @@ export async function fetchOfficialExtracts() {
     }
   }
 
-  const fallbackResponse = await fetchText(TEXT_FALLBACK_URL);
+  const fallbackResponse = await fetchText(buildTextFallbackUrl());
 
   if (!fallbackResponse.ok) {
     throw new Error(
