@@ -4,6 +4,7 @@ import {
   OFFICIAL_EXTRACTS_URL,
 } from "@/lib/results/fetchOfficialExtracts";
 import { normalizeDraws } from "@/lib/results/normalizeDraws";
+import { normalizeOtherLotteries } from "@/lib/results/normalizeOtherLotteries";
 import { parseOfficialExtracts } from "@/lib/results/parseOfficialExtracts";
 import { getArgentinaToday } from "@/lib/results/time";
 import { DRAW_DEFINITIONS, buildPendingDraws } from "@/lib/results/drawDefinitions";
@@ -41,9 +42,10 @@ function findLatestPublishedDraw(draws: OfficialDraw[]) {
   );
 }
 
-function buildDebug(draws: OfficialDraw[]) {
+function buildDebug(draws: OfficialDraw[], otherLotteriesCount = 0) {
   return {
     publishedCount: draws.filter((draw) => draw.status === "published").length,
+    otherLotteriesCount,
     draws: draws.map((draw) => ({
       key: draw.key,
       resultDate: draw.resultDate,
@@ -65,9 +67,10 @@ export async function GET() {
     const officialExtracts = await fetchOfficialExtracts();
     const parsedExtracts = parseOfficialExtracts(officialExtracts.html);
     const draws = normalizeDraws(parsedExtracts.draws, today);
+    const otherLotteries = normalizeOtherLotteries(parsedExtracts.draws, today);
     const latestPublishedDraw = findLatestPublishedDraw(draws);
     const debug = {
-      ...buildDebug(draws),
+      ...buildDebug(draws, otherLotteries.length),
       fetchMode: officialExtracts.fetchMode,
       directStatus: officialExtracts.directStatus,
       parsedDrawsCount: parsedExtracts.draws.length,
@@ -81,6 +84,7 @@ export async function GET() {
         fetchedAt,
         today,
         draws,
+        otherLotteries,
         latestPublishedDraw,
         debug,
       },
@@ -103,6 +107,7 @@ export async function GET() {
         fetchedAt,
         today,
         draws: buildPendingDraws(),
+        otherLotteries: [],
         latestPublishedDraw: null,
         debug: buildDebug(buildPendingDraws()),
         error: {

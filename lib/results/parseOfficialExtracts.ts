@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio";
 import { DRAW_DEFINITIONS } from "@/lib/results/drawDefinitions";
+import { OTHER_LOTTERY_DEFINITIONS } from "@/lib/results/otherLotteryDefinitions";
 import {
   normalizeOfficialDate,
   normalizeOfficialTime,
@@ -26,7 +27,12 @@ function normalizeTitle(title: string) {
 }
 
 const ALLOWED_DRAW_TITLES = new Set(
-  DRAW_DEFINITIONS.map((definition) => normalizeTitle(definition.officialTitle)),
+  [
+    ...DRAW_DEFINITIONS.map((definition) => definition.officialTitle),
+    ...OTHER_LOTTERY_DEFINITIONS.flatMap(
+      (definition) => definition.officialTitles,
+    ),
+  ].map(normalizeTitle),
 );
 
 function htmlToLines(html: string) {

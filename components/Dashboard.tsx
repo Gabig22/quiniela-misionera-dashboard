@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import DrawCard from "@/components/DrawCard";
 import Header from "@/components/Header";
+import OtherLotteryCard from "@/components/OtherLotteryCard";
 import RecentDraw from "@/components/RecentDraw";
 import StatusBar from "@/components/StatusBar";
 import { buildPendingDraws } from "@/lib/results/drawDefinitions";
 import { ARGENTINA_TIME_ZONE } from "@/lib/results/time";
 import type {
   OfficialDraw,
+  OtherLotteryResult,
   ResultsApiResponse,
   ResultsApiSuccess,
 } from "@/lib/results/types";
@@ -162,6 +164,7 @@ function findLatestAvailableDraw(draws: OfficialDraw[]) {
 export default function Dashboard() {
   const [now, setNow] = useState<Date | null>(null);
   const [draws, setDraws] = useState<OfficialDraw[]>(() => buildPendingDraws());
+  const [otherLotteries, setOtherLotteries] = useState<OtherLotteryResult[]>([]);
   const [latestPublishedDraw, setLatestPublishedDraw] =
     useState<OfficialDraw | null>(null);
   const [fetchedAt, setFetchedAt] = useState<string | null>(null);
@@ -196,6 +199,7 @@ export default function Dashboard() {
         }
 
         setDraws(payload.draws);
+        setOtherLotteries(payload.otherLotteries ?? []);
         setLatestPublishedDraw(payload.latestPublishedDraw);
         setFetchedAt(payload.fetchedAt);
         setSourceUpdatedAt(payload.sourceUpdatedAt);
@@ -252,11 +256,12 @@ export default function Dashboard() {
         countdown={now && nextDrawDate ? formatCountdown(nextDrawDate, now) : "--:--:--"}
       />
 
-      <section className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_360px] gap-5">
-        <div className="grid min-h-0 grid-cols-4 gap-4">
+      <section className="grid min-h-0 flex-1 grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid min-h-0 grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {draws.map((draw) => (
             <DrawCard key={draw.key} draw={draw} />
           ))}
+          <OtherLotteryCard lotteries={otherLotteries} />
         </div>
         <RecentDraw draw={recentDraw} />
       </section>

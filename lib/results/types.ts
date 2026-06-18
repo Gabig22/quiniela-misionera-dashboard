@@ -14,8 +14,25 @@ export type Prize = {
   number: string;
 };
 
+export type OtherLotteryJurisdiction = "lotba" | "buenosAires" | "santaFe";
+
 export type OfficialDraw = {
   key: DrawKey;
+  title: string;
+  scheduledTime: string;
+  resultDate: string | null;
+  resultTime: string | null;
+  drawNumber: string | null;
+  status: DrawStatus;
+  prizeCount: number;
+  prizes: Prize[];
+  accent: string;
+};
+
+export type OtherLotteryResult = {
+  key: string;
+  jurisdiction: OtherLotteryJurisdiction;
+  jurisdictionTitle: string;
   title: string;
   scheduledTime: string;
   resultDate: string | null;
@@ -47,9 +64,11 @@ export type ResultsApiSuccess = {
   fetchedAt: string;
   today: string;
   draws: OfficialDraw[];
+  otherLotteries: OtherLotteryResult[];
   latestPublishedDraw: OfficialDraw | null;
   debug: {
     publishedCount: number;
+    otherLotteriesCount?: number;
     fetchMode?: string;
     directStatus?: number | null;
     parsedDrawsCount?: number;
@@ -72,9 +91,11 @@ export type ResultsApiError = {
   fetchedAt: string;
   today: string;
   draws: OfficialDraw[];
+  otherLotteries: OtherLotteryResult[];
   latestPublishedDraw: null;
   debug: {
     publishedCount: number;
+    otherLotteriesCount?: number;
     fetchMode?: string;
     directStatus?: number | null;
     parsedDrawsCount?: number;
