@@ -14,7 +14,7 @@ export const OTHER_LOTTERY_DEFINITIONS: OtherLotteryDefinition[] = [
   {
     key: "lotbaPrevia",
     jurisdiction: "lotba",
-    jurisdictionTitle: "LotBA",
+    jurisdictionTitle: "Nacional",
     officialTitles: ["QUINIELA DE LA CIUDAD | LOTBA LA PREVIA"],
     title: "La Previa",
     scheduledTime: "10:30",
@@ -23,7 +23,7 @@ export const OTHER_LOTTERY_DEFINITIONS: OtherLotteryDefinition[] = [
   {
     key: "lotbaPrimera",
     jurisdiction: "lotba",
-    jurisdictionTitle: "LotBA",
+    jurisdictionTitle: "Nacional",
     officialTitles: ["QUINIELA DE LA CIUDAD | LOTBA PRIMERA MATUTINA"],
     title: "Primera Matutina",
     scheduledTime: "12:15",
@@ -32,7 +32,7 @@ export const OTHER_LOTTERY_DEFINITIONS: OtherLotteryDefinition[] = [
   {
     key: "lotbaMatutina",
     jurisdiction: "lotba",
-    jurisdictionTitle: "LotBA",
+    jurisdictionTitle: "Nacional",
     officialTitles: ["QUINIELA DE LA CIUDAD | LOTBA MATUTINA"],
     title: "Matutina",
     scheduledTime: "15:00",
@@ -41,7 +41,7 @@ export const OTHER_LOTTERY_DEFINITIONS: OtherLotteryDefinition[] = [
   {
     key: "lotbaVespertina",
     jurisdiction: "lotba",
-    jurisdictionTitle: "LotBA",
+    jurisdictionTitle: "Nacional",
     officialTitles: ["QUINIELA DE LA CIUDAD | LOTBA VESPERTINA"],
     title: "Vespertina",
     scheduledTime: "18:00",
@@ -50,7 +50,7 @@ export const OTHER_LOTTERY_DEFINITIONS: OtherLotteryDefinition[] = [
   {
     key: "lotbaNocturna",
     jurisdiction: "lotba",
-    jurisdictionTitle: "LotBA",
+    jurisdictionTitle: "Nacional",
     officialTitles: ["QUINIELA DE LA CIUDAD | LOTBA NOCTURNA"],
     title: "Nocturna",
     scheduledTime: "21:30",
