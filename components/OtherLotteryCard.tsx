@@ -14,6 +14,7 @@ export default function OtherLotteryCard({ lotteries }: OtherLotteryCardProps) {
     [lotteries],
   );
   const [activeIndex, setActiveIndex] = useState(0);
+  const [rotationResetKey, setRotationResetKey] = useState(0);
   const activeLottery =
     visibleLotteries.length > 0
       ? visibleLotteries[activeIndex % visibleLotteries.length]
@@ -33,7 +34,7 @@ export default function OtherLotteryCard({ lotteries }: OtherLotteryCardProps) {
     }, 8000);
 
     return () => window.clearInterval(timer);
-  }, [visibleLotteries.length]);
+  }, [rotationResetKey, visibleLotteries.length]);
 
   if (!activeLottery) {
     return null;
@@ -63,25 +64,33 @@ export default function OtherLotteryCard({ lotteries }: OtherLotteryCardProps) {
       : "border-slate-500/30 bg-slate-500/10 text-slate-300";
   const drawTitle =
     activeLottery.title === "La Previa" ? "Previa" : activeLottery.title;
-  const fullTitle = `${drawTitle} - ${activeLottery.jurisdictionTitle}`;
+  const activeIndicatorIndex = activeIndex % visibleLotteries.length;
+
+  function selectLottery(index: number) {
+    setActiveIndex(index);
+    setRotationResetKey((key) => key + 1);
+  }
 
   return (
     <article
-      className="relative overflow-hidden rounded-md border border-white/10 bg-[#102236]/88 p-3 shadow-panel"
+      className="relative overflow-hidden rounded-md border-2 border-cyan-300/30 bg-[#102236]/88 p-3 shadow-[0_0_0_1px_rgba(246,211,101,0.12),0_18px_40px_rgba(0,0,0,0.24)]"
       style={{ borderTopColor: activeLottery.accent }}
     >
       <div
         className="absolute inset-x-0 top-0 h-1"
         style={{ backgroundColor: activeLottery.accent }}
       />
-      <div className="flex h-[58px] items-start justify-between gap-3">
+      <div className="flex h-[70px] items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#f6d365]">
             Resultados extra
           </p>
-          <h2 className="mt-1 text-lg font-black leading-tight text-white">
-            {fullTitle}
+          <h2 className="mt-1 truncate text-xl font-black leading-tight text-white">
+            {drawTitle}
           </h2>
+          <p className="mt-0.5 truncate text-sm font-black uppercase tracking-[0.12em] text-cyan-100/75">
+            {activeLottery.jurisdictionTitle}
+          </p>
         </div>
         <span
           className={`min-w-[6.5rem] shrink-0 rounded-md border px-2.5 py-1 text-center text-xs font-black tracking-[0.1em] ${badgeClass}`}
@@ -141,12 +150,18 @@ export default function OtherLotteryCard({ lotteries }: OtherLotteryCardProps) {
 
       <div className="mt-3 flex gap-1.5">
         {visibleLotteries.map((lottery, index) => (
-          <span
+          <button
             key={lottery.key}
-            className={`h-1.5 flex-1 rounded-full ${
-              index === activeIndex % visibleLotteries.length
+            type="button"
+            aria-label={`Ver ${lottery.title} - ${lottery.jurisdictionTitle}`}
+            aria-pressed={index === activeIndicatorIndex}
+            title={`${lottery.title} - ${lottery.jurisdictionTitle}`}
+            onClick={() => selectLottery(index)}
+            onMouseEnter={() => selectLottery(index)}
+            className={`h-1.5 flex-1 cursor-pointer rounded-full transition duration-150 hover:scale-y-125 ${
+              index === activeIndicatorIndex
                 ? "bg-[#f6d365]"
-                : "bg-white/10"
+                : "bg-white/10 hover:bg-white/25"
             }`}
           />
         ))}
