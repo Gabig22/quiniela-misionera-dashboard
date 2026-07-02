@@ -15,6 +15,11 @@ import type {
   ResultsApiSuccess,
 } from "@/lib/results/types";
 
+type DashboardProps = {
+  initialNow?: string;
+  initialResults?: ResultsApiResponse;
+};
+
 const dateFormatter = new Intl.DateTimeFormat("es-AR", {
   timeZone: ARGENTINA_TIME_ZONE,
   weekday: "long",
@@ -161,15 +166,36 @@ function findLatestAvailableDraw(draws: OfficialDraw[]) {
   );
 }
 
-export default function Dashboard() {
-  const [now, setNow] = useState<Date | null>(null);
-  const [draws, setDraws] = useState<OfficialDraw[]>(() => buildPendingDraws());
-  const [otherLotteries, setOtherLotteries] = useState<OtherLotteryResult[]>([]);
+export default function Dashboard({
+  initialNow,
+  initialResults,
+}: DashboardProps) {
+  const hasInitialResults =
+    initialResults && isSuccessResponse(initialResults);
+  const [now, setNow] = useState<Date | null>(() =>
+    initialNow ? new Date(initialNow) : null,
+  );
+  const [draws, setDraws] = useState<OfficialDraw[]>(() =>
+    hasInitialResults ? initialResults.draws : buildPendingDraws(),
+  );
+  const [otherLotteries, setOtherLotteries] = useState<OtherLotteryResult[]>(
+    () => (hasInitialResults ? initialResults.otherLotteries : []),
+  );
   const [latestPublishedDraw, setLatestPublishedDraw] =
-    useState<OfficialDraw | null>(null);
-  const [fetchedAt, setFetchedAt] = useState<string | null>(null);
-  const [sourceUpdatedAt, setSourceUpdatedAt] = useState<string | null>(null);
-  const [connectionError, setConnectionError] = useState<string | null>(null);
+    useState<OfficialDraw | null>(() =>
+      hasInitialResults ? initialResults.latestPublishedDraw : null,
+    );
+  const [fetchedAt, setFetchedAt] = useState<string | null>(
+    () => initialResults?.fetchedAt ?? null,
+  );
+  const [sourceUpdatedAt, setSourceUpdatedAt] = useState<string | null>(() =>
+    hasInitialResults ? initialResults.sourceUpdatedAt : null,
+  );
+  const [connectionError, setConnectionError] = useState<string | null>(() =>
+    initialResults && !isSuccessResponse(initialResults)
+      ? "Sin conexion con fuente oficial. Se mantiene la ultima lectura disponible."
+      : null,
+  );
 
   useEffect(() => {
     setNow(new Date());
